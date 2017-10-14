@@ -61,17 +61,14 @@ def request_stuff(season, events):
             event["link"] = link
             event["logo"] = logo
             #event["id"] = event_id
-            events[event_head] = event
             #event["image_bg"] = backgroundImage
-
-
-
-
+            events.append(event)
+                
 @app.route('/')
 def index():
-    us_event = {}
+    us_event = []
     request_stuff("s" + year, us_event)
-    eu_event = {}
+    eu_event = []
     request_stuff("s"+year+"-eu", eu_event)
     event_all = {"us_event":us_event,"eu_event":eu_event}
     return jsonify(event_all)
@@ -79,7 +76,7 @@ def index():
 
 @app.route('/<string:mlh_season>/')
 def select_season(mlh_season):
-    events_all = {}
+    events_all = []
     while True:
         request_stuff(mlh_season, events_all)
         return jsonify(events_all)
@@ -103,9 +100,9 @@ def search_event(mlh_event):
 @app.route('/search/<string:mlh_event>/<string:key_>/')
 
 def search_by_key(mlh_event, key_):
-    us_event = {}
+    us_event = []
     request_stuff("s"+year, us_event)
-    eu_event = {}
+    eu_event = []
     request_stuff("s"+year+"-eu", eu_event)
     for evnt in us_event:
         if urllib.unquote(mlh_event.lower()) == evnt.lower():
