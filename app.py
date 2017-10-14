@@ -19,12 +19,9 @@ def request_stuff(season, events):
         if event_id in events:
             pass
         else:
-            link_tag = str(event_for.find_all('a'))
-            index = link_tag.find('"') +  1
-            link = link_tag[index:]
-            index = link.find('"')
-            link = link[:index]
-            
+            link_tag = event_for.find('a')
+            link = link_tag.get('href')
+
             img_tag = (event_for.findAll('img'))
             backgroundImage = img_tag[0]['src']
             logo = img_tag[1]['src']
@@ -36,10 +33,9 @@ def request_stuff(season, events):
             event_head = event_head[:index]
 
             event_date = str(event_for.find_all('p'))
-            index = event_date.find(">") + 1
-            event_date = event_date[index:]
-            index = event_date.find("<")
-            event_date = event_date[:index]
+            dates = event_for.find_all('meta')
+            start_date = dates[0]['content']
+            end_date = dates[1]['content']
 
             #This is for getting the city
             event_loc = str(event_for.find_all('span'))
@@ -47,9 +43,9 @@ def request_stuff(season, events):
             event_loc = event_loc[index:]
             index = event_loc.find("<")
             event_loc_city = event_loc[:index]
-            
+
             #This is for getting the state, I added +9 because after it was ending -
-            #- at "</span>, ". +9 just moves the pointer forward.            
+            #- at "</span>, ". +9 just moves the pointer forward.
             event_loc = event_loc[index+9:]
             index = event_loc.find(">") + 1
             event_loc = event_loc[index:]
@@ -58,16 +54,18 @@ def request_stuff(season, events):
             event_loc = event_loc_city+ ", " + event_loc_state
 
             event = {}
-            event["location"] = event_loc
-            event["date"] = event_date
             event["name"] = event_head
+            event["location"] = event_loc
+            event["start_date"] = start_date
+            event["end_date"] = end_date
             event["link"] = link
-            event["id"] = event_id
+            event["logo"] = logo
+            #event["id"] = event_id
             events[event_head] = event
-            event["image_bg"] = backgroundImage
-            event["image_logo"] = logo
+            #event["image_bg"] = backgroundImage
 
-    
+
+
 
 @app.route('/')
 def index():
